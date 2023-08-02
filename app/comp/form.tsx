@@ -1,73 +1,82 @@
 "use client"
 import React from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { Button, TextField } from '@mui/material';
+import { Button, Card, CardContent, Stack, TextField } from '@mui/material';
 
 interface Hobby {
-  name: string;
+      name: string;
 }
 
 interface FormData {
-  name: string;
-  age: number;
-  hobbies: Hobby[];
+      name: string;
+      age: number;
+      hobbies: Hobby[];
 }
 
 const defaultValues: FormData = {
-  name: '',
-  age: 0,
-  hobbies: [],
+      name: '',
+      age: 0,
+      hobbies: [],
 };
 
 const MyForm: React.FC = () => {
-  const { control, handleSubmit, reset } = useForm<FormData>({
-    defaultValues,
-  });
+      const { control, handleSubmit, reset } = useForm<FormData>({
+            defaultValues,
+      });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'hobbies',
-  });
+      const { fields, append, remove } = useFieldArray({
+            control,
+            name: 'hobbies',
+      });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data); 
-  };
+      const onSubmit = (data: FormData) => {
+            console.log(data);
+      };
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Controller
-        name="name"
-        control={control}
-        defaultValue=""
-        render={({ field }) => <TextField id="filled-basic" {...field} label="Name" />}
-      />
-      <Controller
-        name="age"
-        control={control}
-        defaultValue={0}
-        render={({ field }) => <TextField id="standard-basic"  {...field} type="number" label="Age" />}
-      />
+      return (
+            <Card variant="outlined">
+                  <CardContent>
 
-      {fields.map((item, index) => (
-        <div key={item.id}>
-          <Controller
-            name={`hobbies.${index}.name` as const}
-            control={control}
-            defaultValue=""
-            render={({ field }) => <TextField {...field} label={`Hobby ${index + 1}`} />}
-          />
-          <Button onClick={() => remove(index)}>Remove</Button>
-        </div>
-      ))}
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                              <Stack spacing={2} sx={{ width: '100%' }}>
+                                    <Controller
+                                          name="name"
+                                          control={control}
+                                          defaultValue=""
+                                          render={({ field }) => <TextField {...field} label="Name" />}
+                                    />
+                                    <Controller
+                                          name="age"
+                                          control={control}
+                                          defaultValue={0}
+                                          render={({ field }) => <TextField {...field} type="number" label="Age" />}
+                                    />
 
-      <Button variant="outlined" onClick={() => append({ name: '' })}>Add Hobby</Button>
+                                    {fields.map((item, index) => (
+                                          <div key={item.id}>
+                                                <Stack direction="row" spacing={2}>
+                                                      <Controller
+                                                            name={`hobbies.${index}.name` as const}
+                                                            control={control}
+                                                            defaultValue=""
+                                                            render={({ field }) => <TextField {...field} label={`Hobby ${index + 1}`} />}
+                                                      />
+                                                      <Button variant="outlined" onClick={() => remove(index)}>Remove</Button>
+                                                </Stack>
+                                          </div>
+                                    ))}
 
-      <Button variant="outlined" type="submit">Submit</Button>
-      <Button variant="outlined" type="button" onClick={() => reset(defaultValues)}>
-        Reset
-      </Button>
-    </form>
-  );
+                                    <Button variant="outlined" onClick={() => append({ name: '' })}>Add Hobby</Button>
+
+                                    <Button variant="outlined" type="submit">Submit</Button>
+                                    <Button variant="outlined" type="button" onClick={() => reset(defaultValues)}>
+                                          Reset
+                                    </Button>
+                              </Stack>
+                        </form>
+                  </CardContent>
+            </Card>
+      );
 };
 
 export default MyForm;
